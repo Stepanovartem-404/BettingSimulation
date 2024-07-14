@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betting Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            font-family: system-ui;
+            color: red;
+        }
+        p {
+            font-weight: bold;
+            color: #555;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            border: 2px solid #6495ED;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #B0E0E6;
+            text-align: left;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .input-field {
+            margin: 10px 0;
+        }
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1em;
+            width: 60px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #6495ED;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00008B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Betting Simulation</h1>
+        <p>Player bets 5% of the bank on each bet. Initial bank is $20000. One-third of the bets have odds of 1.4, one-third have odds of 1.5, and one-third have odds of 1.6.</p>
+        <div class="input-field">
+            <label for="winRate">Enter win rate (%): </label>
+            <input type="number" id="winRate" value="75" min="0" max="100">
+        </div>
+        <button onclick="runSimulation()">Run Simulation</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function simulateBets(initialBank, numberOfBets, winRate) {
+            let bank = initialBank;
+            const odds = [1.4, 1.5, 1.6];
+            const winRateDecimal = winRate / 100;
+
+            const betsPerOdd = numberOfBets / 3;
+
+            for (let i = 0; i < numberOfBets; i++) {
+                const betSize = bank * 0.05;
+                const currentOdds = odds[Math.floor(i / betsPerOdd)];
+
+                if (Math.random() < winRateDecimal) {
+                    bank += betSize * (currentOdds - 1);
+                } else {
+                    bank -= betSize;
+                }
+            }
+
+            return bank.toFixed(2);
+        }
+
+        function runSimulation() {
+            const initialBank = 20000;
+            const winRate = document.getElementById("winRate").value;
+            const resultDiv = document.getElementById("result");
+
+            const bankAfter30Bets = simulateBets(initialBank, 30, winRate);
+            const bankAfter90Bets = simulateBets(initialBank, 90, winRate);
+            const bankAfter120Bets = simulateBets(initialBank, 120, winRate);
+            const bankAfter360Bets = simulateBets(initialBank, 360, winRate);
+            const bankAfter500Bets = simulateBets(initialBank, 500, winRate);
+
+            resultDiv.innerHTML = `
+                <div style="background-color: #B0C4DE; color: white; padding: 10px; border-radius: 5px;">
+                    <p>Bank after 30 bets: $${bankAfter30Bets}</p>
+                    <p>Bank after 90 bets: $${bankAfter90Bets}</p>
+                    <p>Bank after 120 bets: $${bankAfter120Bets}</p>
+                    <p>Bank after 360 bets: $${bankAfter360Bets}</p>
+                    <p>Bank after 500 bets: $${bankAfter500Bets}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
